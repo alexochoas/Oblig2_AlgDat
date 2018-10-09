@@ -123,6 +123,9 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
     public DobbeltLenketListe(){
 
+        hode = null;
+        hale = null;
+
     }
 
     @Override
@@ -152,11 +155,48 @@ public class DobbeltLenketListe<T> implements Liste<T> {
     @Override
     public void LeggInn(int i, T verdi) {
 
+        Objects.requireNonNull(verdi, "Null-verdier er ikke lov!");
+
+        indeksKontroll(i, true);
+
+        if(i == indeksTil(hode.verdi)){
+
+            hode.forrige = new Node<>(verdi, hode, null);
+            hode = hode.forrige;
+
+            endringer++;
+            antall++;
+        } else if(i == indeksTil(hale.verdi)){
+
+            hale.neste = new Node<>(verdi, null, hale);
+            hale = hale.neste;
+
+            endringer++;
+            antall++;
+        }else {
+
+            Node<T> p = finnNode(i-1);
+            Node<T> q = finnNode(i);
+            Node<T> newNode;
+            newNode = new Node<>(verdi, q, p);
+            p.neste = newNode;
+            q.forrige = newNode;
+
+            endringer++;
+            antall++;
+        }
+
+
+
+
+
+
     }
 
     @Override
     public boolean inneholder(T verdi) {
-        return false;
+
+        return indeksTil(verdi) != -1;
     }
 
     @Override
@@ -166,12 +206,34 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
     @Override
     public int indeksTil(T verdi) {
-        return 0;
+
+        if(verdi == null) {
+            return -1;
+        }
+
+
+        Node<T> currNode = hode;
+        int currNodeIndex = 0;
+        while(currNode != null){
+
+            if(currNode.verdi.equals(verdi)){
+                return currNodeIndex;
+            }
+
+            currNode = currNode.neste;
+            currNodeIndex++;
+
+        }
+
+
+
+        return -1;
     }
 
     @Override
     public T oppdater(int i, T verdi) {
 
+        Objects.requireNonNull(verdi);
         T gml = hent(i);
 
         finnNode(i).verdi = verdi;
@@ -249,8 +311,8 @@ public class DobbeltLenketListe<T> implements Liste<T> {
             return "[]";
         }
 
-        String s = "[";
-        StringBuilder stringBuilder = new StringBuilder(s);
+
+        StringBuilder stringBuilder = new StringBuilder("[");
 
         Node<T> currNode = hode;
 
@@ -268,6 +330,8 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
     }
 
+
+
     private Node<T> finnNode(int indeks){
 
         indeksKontroll(indeks, false);
@@ -280,15 +344,17 @@ public class DobbeltLenketListe<T> implements Liste<T> {
             teller = 0;
             while (teller < indeks){
                 currNode = currNode.neste;
+                teller++;
             }
 
             return currNode;
         } else{
 
             currNode = hale;
-            teller = antall;
+            teller = antall-1;
             while (teller > indeks){
                 currNode = currNode.forrige;
+                teller--;
             }
 
             return currNode;
@@ -313,13 +379,33 @@ public class DobbeltLenketListe<T> implements Liste<T> {
                     ("fra(" + fra + ") > til(" + til + ") - illegalt intervall!");
     }
 
-    public Liste<T> subListe(Liste liste, int fra, int til){
+    public Liste<T> subliste(int fra, int til){
+
 
         fratilKontroll(antall, fra, til);
+        Liste<T> sub = new DobbeltLenketListe<>();
+
+        if(fra == til){
+            return sub;
+        }
 
 
 
-        return null;
+
+        for(int i = fra; i < til; i++){
+
+            sub.leggInn(finnNode(i).verdi);
+
+        }
+
+        /*while (currNode != lastNode.neste){
+            sub.leggInn(currNode.verdi);
+            currNode = currNode.neste;
+        }*/
+
+
+
+        return sub;
 
 
 
