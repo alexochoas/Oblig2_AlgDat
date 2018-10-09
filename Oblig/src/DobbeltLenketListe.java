@@ -272,53 +272,131 @@ public class DobbeltLenketListe<T> implements Liste<T> {
             if(inneholder(verdi)){
                 hode = null;
                 hale = null;
+                antall--;
+                return true;
             }
 
         }
         // Dersom man fjerner første verdi
-        if(indeksTil(verdi) == 0){
 
-            Node<T> newHead = hode.neste;
-
-            newHead.forrige = null;
-            hode.neste = null;
+        if(verdi == hode.verdi){
 
 
-            hode = newHead;
+            hode = hode.neste;
+            hode.forrige = null;
+
+            antall--;
             return true;
+
+
         }
 
-        if(indeksTil(verdi) == antall-1){
+        //Leter etter noden
 
-            Node<T> newTail = hale.forrige;
+        Node<T> currNode = hode.neste;
 
-            newTail.neste = null;
+        while(currNode != null){
 
-            hale = newTail;
+            if(currNode.verdi == verdi){
 
-            return true;
+                //Dersom det er den siste noden som skal fjernes
+                if(currNode == hale){
+
+                    hale = hale.forrige;
+                    hale.neste = null;
+
+                    antall--;
+                    return true;
+
+                }
+
+                //Ellers
+                Node<T> v = currNode.forrige;
+                Node<T> h = currNode.neste;
+
+                v.neste = h;
+                h.forrige = v;
+
+                currNode.neste = null;
+                currNode.forrige = null;
+
+                antall--;
+                return true;
+
+            }
+
+            currNode = currNode.neste;
+
+
         }
-
-        //Fjerner en node mellom to andre noder.
-
-        //nodene ved siden av
-        Node <T> v = finnNode(indeksTil(verdi) - 1);
-        Node<T> h = finnNode(indeksTil(verdi) + 1);
-
-        //Noden som skal fjernes
-        Node<T> f = finnNode(indeksTil(verdi));
-
-
-
-
-
 
         return false;
+
     }
 
 
     @Override
     public T fjern(int indeks) {
+
+        indeksKontroll(indeks, false);
+
+        //Om vi skal fjerne første node
+
+        if(indeks == 0){
+
+            T gml = hode.verdi;
+
+            hode = hode.neste;
+            hode.forrige = null;
+
+            antall--;
+            return gml;
+        }
+
+        int teller;
+        Node<T> currNode = hode.neste;
+
+        for(teller = 1; currNode != null; teller++){
+
+            if(teller == indeks){
+
+                //Om det er siste node som skal fjernes.
+                if(currNode == hale){
+
+                    T gml = hale.verdi;
+
+                    hale = hale.forrige;
+                    hale.neste = null;
+
+                    antall--;
+                    return gml;
+                }
+
+                //ellers
+                T gml = currNode.verdi;
+
+                Node<T> v = currNode.forrige;
+                Node<T> h = currNode.neste;
+
+                v.neste = h;
+                h.forrige = v;
+
+                currNode.neste = null;
+                currNode.forrige = null;
+                currNode = null;
+
+
+                antall--;
+                return gml;
+
+            }
+
+            currNode = currNode.neste;
+
+        }
+
+
+
         return null;
     }
 
