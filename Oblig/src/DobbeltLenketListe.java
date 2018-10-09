@@ -175,7 +175,7 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
             endringer++;
             antall++;
-        } 
+        }
         else if(i == antall) {
 
             hale.neste  = new Node<>(verdi, null, hale);
@@ -261,6 +261,58 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
     @Override
     public boolean fjern(T verdi) {
+
+
+        if(tom()) {
+            return false;
+        }
+
+        if(antall == 1){
+
+            if(inneholder(verdi)){
+                hode = null;
+                hale = null;
+            }
+
+        }
+        // Dersom man fjerner første verdi
+        if(indeksTil(verdi) == 0){
+
+            Node<T> newHead = hode.neste;
+
+            newHead.forrige = null;
+            hode.neste = null;
+
+
+            hode = newHead;
+            return true;
+        }
+
+        if(indeksTil(verdi) == antall-1){
+
+            Node<T> newTail = hale.forrige;
+
+            newTail.neste = null;
+
+            hale = newTail;
+
+            return true;
+        }
+
+        //Fjerner en node mellom to andre noder.
+
+        //nodene ved siden av
+        Node <T> v = finnNode(indeksTil(verdi) - 1);
+        Node<T> h = finnNode(indeksTil(verdi) + 1);
+
+        //Noden som skal fjernes
+        Node<T> f = finnNode(indeksTil(verdi));
+
+
+
+
+
+
         return false;
     }
 
@@ -419,8 +471,6 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
 
         return sub;
-
-
 
 
     }
