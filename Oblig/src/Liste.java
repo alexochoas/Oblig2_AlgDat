@@ -4,7 +4,7 @@ import java.util.Iterator;
 public interface Liste<T> extends Beholder<T> {
 
     public boolean leggInn(T verdi);
-    public void LeggInn(int i, T verdi);
+    public void leggInn(int i, T verdi);
     public boolean inneholder(T verdi);
     public T hent(int i);
     public int indeksTil(T verdi);

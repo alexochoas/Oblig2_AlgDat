@@ -153,11 +153,20 @@ public class DobbeltLenketListe<T> implements Liste<T> {
     }
 
     @Override
-    public void LeggInn(int i, T verdi) {
+    public void leggInn(int i, T verdi) {
 
         Objects.requireNonNull(verdi, "Null-verdier er ikke lov!");
 
         indeksKontroll(i, true);
+        if(tom()){
+
+            hale = hode = new Node(verdi, null,null);
+            antall++;
+            endringer++;
+            return;
+
+        }
+
 
         if(i == indeksTil(hode.verdi)){
 
@@ -166,14 +175,18 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
             endringer++;
             antall++;
-        } else if(i == indeksTil(hale.verdi)){
+        } 
+        else if(i == antall) {
 
-            hale.neste = new Node<>(verdi, null, hale);
+            hale.neste  = new Node<>(verdi, null, hale);
+
             hale = hale.neste;
 
+            antall ++;
             endringer++;
-            antall++;
-        }else {
+
+        }
+            else {
 
             Node<T> p = finnNode(i-1);
             Node<T> q = finnNode(i);
