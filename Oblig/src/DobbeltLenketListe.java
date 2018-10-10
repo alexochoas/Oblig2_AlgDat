@@ -1,4 +1,6 @@
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class DobbeltLenketListe<T> implements Liste<T> {
@@ -7,8 +9,6 @@ public class DobbeltLenketListe<T> implements Liste<T> {
     private int endringer = 0;
     private Node<T> hode;
     private Node<T> hale;
-
-
 
 
     public DobbeltLenketListe(T[] a){
@@ -267,19 +267,18 @@ public class DobbeltLenketListe<T> implements Liste<T> {
             return false;
         }
 
-        if(antall == 1){
+        if(antall == 1 && hode.verdi.equals(verdi)){
 
-            if(inneholder(verdi)){
-                hode = null;
-                hale = null;
-                antall--;
-                return true;
-            }
+           hode = null;
+           hale = null;
+
+           antall--;
+           return true;
 
         }
         // Dersom man fjerner første verdi
 
-        if(verdi == hode.verdi){
+        if(verdi.equals(hode.verdi)){
 
 
             hode = hode.neste;
@@ -297,7 +296,7 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
         while(currNode != null){
 
-            if(currNode.verdi == verdi){
+            if(currNode.verdi.equals(verdi)){
 
                 //Dersom det er den siste noden som skal fjernes
                 if(currNode == hale){
@@ -340,6 +339,23 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
         indeksKontroll(indeks, false);
 
+
+        //Itelfelle der Listen blir tom etter fjerning
+
+        if(antall == 1 && indeks == 0){
+
+            T gml = hode.verdi;
+
+            hode = null;
+            hale = null;
+
+            antall--;
+
+            return gml;
+
+        }
+
+
         //Om vi skal fjerne første node
 
         if(indeks == 0){
@@ -353,26 +369,34 @@ public class DobbeltLenketListe<T> implements Liste<T> {
             return gml;
         }
 
+        //Om vi skal fjerne den siste
+
+        if(indeks == antall-1){
+
+            T gml = hale.verdi;
+            hale = hale.forrige;
+            hale.neste = null;
+
+            antall--;
+            return gml;
+
+        }
+
+
         int teller;
-        Node<T> currNode = hode.neste;
 
-        for(teller = 1; currNode != null; teller++){
 
-            if(teller == indeks){
+        Node<T> currNode;
 
-                //Om det er siste node som skal fjernes.
-                if(currNode == hale){
+        //Tester om vi skal søke fra bakerst eller forrerst i lista
 
-                    T gml = hale.verdi;
 
-                    hale = hale.forrige;
-                    hale.neste = null;
 
-                    antall--;
-                    return gml;
-                }
+        currNode = hode.neste;
 
-                //ellers
+        for(teller = 1; currNode != null; teller++) {
+
+            if (teller == indeks) {
                 T gml = currNode.verdi;
 
                 Node<T> v = currNode.forrige;
@@ -389,13 +413,11 @@ public class DobbeltLenketListe<T> implements Liste<T> {
                 antall--;
                 return gml;
 
-            }
+        }
 
             currNode = currNode.neste;
 
         }
-
-
 
         return null;
     }
@@ -410,14 +432,56 @@ public class DobbeltLenketListe<T> implements Liste<T> {
         return antall == 0;
     }
 
+
+    /*public void nullstill1() {
+
+
+
+        if(antall == 0){
+            return;
+        }
+
+        while(hode != hale) {
+
+            hode = hode.neste;
+            hode.forrige = null;
+            antall--;
+
+        }
+
+        hode = null;
+        hale = null;
+        antall--;
+
+
+
+
+
+
+
+    }*/
+
     @Override
     public void nullstill() {
+
+
+
+        while(antall > 0){
+
+            fjern(0);
+        }
+
 
     }
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        return new DobbeltLenketListeIterator();
+    }
+
+    public Iterator<T> iterator(int indeks){
+
+        return new DobbeltLenketListeIterator(indeks);
     }
 
 
@@ -552,6 +616,57 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
 
     }
+
+
+    private class DobbeltLenketListeIterator implements Iterator<T>
+    {
+        private Node<T> denne;
+        private boolean fjernOK;
+        private int iteratorendringer;
+        private DobbeltLenketListeIterator()
+        {
+            denne = hode; // denne starter på den første i listen
+            fjernOK = false; // blir sann når next() kalles
+            iteratorendringer = endringer; // teller endringer
+        }
+
+        private DobbeltLenketListeIterator(int indeks)
+        {
+            denne = finnNode(indeks);
+            fjernOK = false;
+            iteratorendringer = endringer;
+        }
+        @Override
+        public boolean hasNext()
+        {
+            return denne != null; // denne koden skal ikke endres!
+        }
+        @Override
+        public T next()
+        {
+
+            if(iteratorendringer != endringer){
+                throw new ConcurrentModificationException("ikke ok");
+            }
+
+            if(!hasNext()){
+                throw new NoSuchElementException("Det finnes ingen neste");
+            }
+
+            fjernOK = true;
+
+            T returVerdi = denne.verdi;
+
+            denne = denne.neste;
+
+            return returVerdi;
+        }
+        @Override
+        public void remove()
+        {
+            throw new UnsupportedOperationException("Ikke laget ennå!");
+        }
+    } // DobbeltLenketListeIterator
 
 
 
