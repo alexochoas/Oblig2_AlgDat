@@ -1,7 +1,4 @@
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 public class DobbeltLenketListe<T> implements Liste<T> {
 
@@ -670,12 +667,199 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
             return returVerdi;
         }
-        @Override
+     /*   @Override
         public void remove()
         {
-            throw new UnsupportedOperationException("Ikke laget ennå!");
+
+            if(!fjernOK){
+                throw new IllegalStateException("remove kan ikke kalles nå");
+            }
+
+            if(endringer != iteratorendringer){
+                throw new ConcurrentModificationException("endringer er ulik iteratorendringer.");
+
+            }
+
+
+            if(hode.neste == denne){
+
+                 hode = hode.neste;
+
+                 hode.forrige = null;
+
+                 //Dette var den eneste noden.
+                 if(denne == null){
+                     hale = null;
+                 } else{
+
+                     Node<T> f = hode;
+
+                 }
+
+                 antall--;
+                 endringer++;
+                 iteratorendringer++;
+
+            } else if(denne == hale){
+
+                    denne = hale = hale.forrige;
+
+                    denne.neste = null;
+                    hode.neste = null;
+
+                    antall--;
+                    endringer++;
+                    iteratorendringer++;
+                } else{
+
+                Node<T> v = denne.forrige;
+                Node<T> h = denne.neste;
+
+                v.neste = h;
+                h.forrige = v;
+
+
+                antall--;
+                endringer++;
+                iteratorendringer++;
+
+
+
+
+            }*/
+
+
+        @Override
+        public void remove() {
+
+
+            if(!fjernOK){
+                throw new IllegalStateException("remove kan ikke kalles nå");
+            }
+
+            if(endringer != iteratorendringer){
+                throw new ConcurrentModificationException("endringer er ulik iteratorendringer.");
+
+            }
+
+            fjernOK = false;
+
+
+
+            if(antall == 1){
+                hode = null;
+                hale = null;
+
+
+            }
+
+
+
+            //hjelpeNode
+
+            else if(hode.neste == denne){
+
+                hode = hode.neste;
+                hode.forrige = null;
+
+
+
+
+
+                //Dersom denne var eneste noden i listen
+
+                if(denne == null){
+                    hale = null;
+                }
+
+
+            }else if (denne == null) {
+                    hale = hale.forrige;
+                    hale.neste = null;
+
+
+
+
+                }
+            else{
+                //Leter etter forgjenger f til denne
+
+                Node<T> f = hode;
+                while (f.neste.neste != denne) {
+
+                    f = f.neste;
+                }
+
+                //q skal fjernes
+                f.neste = denne;
+                denne.forrige = f;
+
+
+              /*  q.verdi = null;
+                q.neste = null;
+                q.forrige = null;
+*/
+
+
+            }
+                antall--;
+                endringer++;
+                iteratorendringer++;
+
+
+                }
+
+    }
+
+    public static <T> void sorter (Liste<T> liste, Comparator<? super T> c){
+
+
+        if(liste.tom()){
+            return;
         }
-    } // DobbeltLenketListeIterator
+
+        if(liste.antall() == 1){
+            return;
+        }
+        int bytter = -1;
+
+        int teller = 0;
+
+        int sluttIndeks = liste.antall()-1;
+
+        T v = liste.hent(teller);
+        T h = liste.hent(teller +1);
+
+
+        while(bytter != 0){
+
+            bytter = 0;
+            for(teller = 0; teller < sluttIndeks; teller++) {
+
+
+                v = liste.hent(teller);
+                h = liste.hent(teller + 1);
+                if (c.compare(v, h) > 0) {
+
+                    liste.oppdater(teller, h);
+                    liste.oppdater(teller + 1, v);
+
+                    bytter++;
+                }
+
+
+
+            }
+            sluttIndeks--;
+
+        }
+
+
+    }
+
+
+
+
 
 
 
