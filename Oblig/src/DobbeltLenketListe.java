@@ -273,6 +273,7 @@ public class DobbeltLenketListe<T> implements Liste<T> {
            hale = null;
 
            antall--;
+           endringer++;
            return true;
 
         }
@@ -285,6 +286,7 @@ public class DobbeltLenketListe<T> implements Liste<T> {
             hode.forrige = null;
 
             antall--;
+            endringer++;
             return true;
 
 
@@ -305,6 +307,7 @@ public class DobbeltLenketListe<T> implements Liste<T> {
                     hale.neste = null;
 
                     antall--;
+                    endringer++;
                     return true;
 
                 }
@@ -320,6 +323,7 @@ public class DobbeltLenketListe<T> implements Liste<T> {
                 currNode.forrige = null;
 
                 antall--;
+                endringer++;
                 return true;
 
             }
@@ -351,6 +355,7 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
             antall--;
 
+            endringer++;
             return gml;
 
         }
@@ -366,6 +371,7 @@ public class DobbeltLenketListe<T> implements Liste<T> {
             hode.forrige = null;
 
             antall--;
+            endringer++;
             return gml;
         }
 
@@ -378,6 +384,7 @@ public class DobbeltLenketListe<T> implements Liste<T> {
             hale.neste = null;
 
             antall--;
+            endringer++;
             return gml;
 
         }
@@ -411,6 +418,7 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
 
                 antall--;
+                endringer++;
                 return gml;
 
         }
@@ -469,6 +477,7 @@ public class DobbeltLenketListe<T> implements Liste<T> {
         while(antall > 0){
 
             fjern(0);
+
         }
 
 
